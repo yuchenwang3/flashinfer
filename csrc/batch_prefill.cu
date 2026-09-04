@@ -67,7 +67,7 @@ Array<int64_t> BatchPrefillWithKVCachePlan(
       static_cast<IdType*>(kv_indptr.data_ptr()), total_num_rows, batch_size, num_qo_heads,
       num_kv_heads, head_dim_qk, head_dim_vo, page_size, enable_cuda_graph,
       /*sizeof_dtype_o=*/2, window_left, fixed_split_size, disable_split_kv, num_colocated_ctas,
-      uniform_q_len, stream, /*kv_dtype_bytes=*/sizeof(DTypeKV));
+      uniform_q_len, stream, /*kv_dtype_bytes=*/sizeof(DTypeKV), causal);
 
   TVM_FFI_ICHECK(status == cudaSuccess)
       << "Failed to plan prefill with error: " << cudaGetErrorString(status);
@@ -82,7 +82,6 @@ Array<int64_t> BatchPrefillWithKVCacheWorkspaceSize(
     bool causal, int64_t window_left, int64_t fixed_split_size, bool disable_split_kv,
     int64_t num_colocated_ctas = 0, int64_t uniform_q_len = 0) {
   (void)kv_len_arr;
-  (void)causal;
   size_t float_workspace_size_in_bytes = 0;
   size_t int_workspace_size_in_bytes = 0;
 
@@ -93,7 +92,7 @@ Array<int64_t> BatchPrefillWithKVCacheWorkspaceSize(
       static_cast<IdType*>(qo_indptr.data_ptr()), static_cast<IdType*>(kv_indptr.data_ptr()),
       total_num_rows, batch_size, num_qo_heads, num_kv_heads, head_dim_qk, head_dim_vo, page_size,
       enable_cuda_graph, /*sizeof_dtype_o=*/2, window_left, fixed_split_size, disable_split_kv,
-      num_colocated_ctas, uniform_q_len, stream, /*kv_dtype_bytes=*/sizeof(DTypeKV));
+      num_colocated_ctas, uniform_q_len, stream, /*kv_dtype_bytes=*/sizeof(DTypeKV), causal);
 
   TVM_FFI_ICHECK(status == cudaSuccess)
       << "Failed to calculate prefill workspace size with error: " << cudaGetErrorString(status);
